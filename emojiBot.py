@@ -35,3 +35,4 @@ def botGetComment(trigger):
 	for comment in reddit.subreddit('all').comments(limit=50):
 	if comment == trigger and comment.id not in idList:
 		writeToFile(comment.id)
+
