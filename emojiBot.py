@@ -2,6 +2,7 @@ import praw
 import time
 import config
 import requests
+import bs4
 
 '''
 This comment is the "trigger"
@@ -65,8 +66,7 @@ def botGetComment(trigger):
 		if comment == trigger and comment.id not in idList:
 			writeToFile(comment.id)
 
-#I think this was supposed to be my "main"?
-#AKA where I would have called all my helper functions
-#and running the entire script
+#This is the function that would connect to emojipasta.co
+#paste the comment, then return the emojified string.
 def emojify():
 	req = requests.get("emojipasta.co")
