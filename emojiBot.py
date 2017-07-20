@@ -57,8 +57,11 @@ def verifyConnection(request):
 #Pretty sure this parses through all the comments in a subreddit
 #and if the trigger string is found, then the script writes to file
 #the comment ID
+
 def botGetComment(trigger):
-	for comment in reddit.subreddit('all').comments(limit=50):
+	#putting 'test' as reddit.subreddit parameter so that
+	#I can properly test the bot before "deploying"
+	for comment in reddit.subreddit('test').comments(limit=50):
 		if comment == trigger and comment.id not in idList:
 			writeToFile(comment.id)
 
