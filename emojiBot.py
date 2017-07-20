@@ -49,16 +49,18 @@ def writeToFile(commentID):
 		infile.write(commentID + "\n")
 		infile.close()
 
+#I'm not really sure what this does
 def verifyConnection(request):
 	print(requests.url())
+
 
 #Pretty sure this parses through all the comments in a subreddit
 #and if the trigger string is found, then the script writes to file
 #the comment ID
 def botGetComment(trigger):
 	for comment in reddit.subreddit('all').comments(limit=50):
-	if comment == trigger and comment.id not in idList:
-		writeToFile(comment.id)
+		if comment == trigger and comment.id not in idList:
+			writeToFile(comment.id)
 
 #I think this was supposed to be my "main"?
 #AKA where I would have called all my helper functions
