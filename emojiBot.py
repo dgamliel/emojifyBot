@@ -66,7 +66,18 @@ def botGetComment(trigger):
 		if comment == trigger and comment.id not in idList:
 			writeToFile(comment.id)
 
-#This is the function that would connect to emojipasta.co
-#paste the comment, then return the emojified string.
-def emojify():
-	req = requests.get("emojipasta.co")
+def scrape(comment):
+	textBox = "<textarea class='form-control animated' rows='6' id='text' accept-charset='utf-8'></textarea>"
+
+	#sends a get requests to emojipasta.co and receives index.html data
+	req = requests.get("http://emojipasta.co")
+	
+	#intializes a BS4 object passing the HTML of the text box from the emojipasta website
+	soup = BeautifulSoup(textBox)
+
+	#inserts our comment into the box?
+	soup.insert(comment)
+
+	#TODO: figure out how the fuck server requests work. 
+
+	
