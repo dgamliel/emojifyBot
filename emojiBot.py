@@ -17,24 +17,24 @@ phrase = "!emojify"
 def login():
 
 	'''
-	Initializes a reddit instance
+	Initializes a reddit instance.
 	logs in by importing config.txt.
 
 	Username, password, client_id, and client_secret are all strings.
 	'''
 
 	reddit = praw.Reddit(username = config.username,
- 		     	    password = config.password,
-		     	    client_id = config.client_id,
-		     	    client_secret = config.client_secret,
-					user_agent = config.user_agent)
+ 		     	         password = config.password,
+		     	         client_id = config.client_id,
+		     	         client_secret = config.client_secret,
+					     user_agent = config.user_agent)
 
-	print ("Successfully logged into reddit")
+	print ("Successfully logged into reddit" + '\n')
 
 	return reddit #Returns a reddit instance, essentially "logs in"
 
 #Writes to 'idFile.txt' to make sure we only respond to a comment once
-def writeToFile(commentID):
+def writeToFile(redditComment):
 
 	#Opens a file called "idFile.txt"
 	infile = open('idFile.txt', 'a+')
@@ -49,8 +49,8 @@ def writeToFile(commentID):
 	#is not in idList, then add the new commentID to 
 	#the file "idFile.txt"
 
-	if commentID not in idList:
-		infile.write(commentID + "\n")
+	if redditComment not in idList:
+		infile.write(redditComment.id + '\n')
 		infile.close()
 
 #I'm not really sure what this does
@@ -63,25 +63,17 @@ def verifyConnection(request):
 def getComment(trigger):
 
 	#Generates a list of ID's to parse through
-	#TODO: Make this a hashbank/Dict somehow?
 	idFile = open('idFile.txt', 'r')
 	idList = idFile.readlines()
 	idFile.close()
 
-	#Parses comments and returns the parent of trigger comment
-	#TODO: fetch and return parent comment
-	for comment in reddit.subreddit('test').comments(limit=75):
-		if comment == trigger and comment.id not in idList and not comment.is_root():
-			
-			print('FOUND MATCHING COMMENT')
-			writeToFile(comment.id)
-			parent = comment.parent()
-
-			print(parent.body())
-			return parent.body()
-
-		else:
-			print('COMMENT NOT FOUND')
+	#Test to verify bot is fetching comments in subreddit 'test' and returns unique comment each time.
+	#NOTE: In testing we add 100 ID's to the file idFile.txt each time so if we want to make the bot
+	#run smoothly it might be efficient to clear the file ever time after ever 100 tests or so.
+	for comment in reddit.subreddit('test').comments(limit=100):
+		if comment not in idList:
+			print(comment.body + '\nComment ID is : ' + comment.id + '\n')
+			writeToFile(comment)
 
 def scrape(comment):
 	textBox = "<textarea class='form-control animated' rows='6' id='text' accept-charset='utf-8'></textarea>"
@@ -91,11 +83,10 @@ def scrape(comment):
 	print ("GET request sent to : http://emojipasta.co")
 	
 	#intializes a BS4 object passing the HTML of the text box from the emojipasta website
-	#Uses 'lxml' to parse (I don't know what this means)
-	soup = bs4.BeautifulSoup(textBox, "lxml")
+	soup = BeautifulSoup(textBox)
 
 	#inserts our comment into the box?
-	soup.textarea.append(comment)
+	soup.insert(comment)
 	print ("Soup object now looks like : ")
 	print (soup)
 
@@ -105,7 +96,7 @@ def scrape(comment):
 
 while True:
 	reddit = login()
+	print ('ATTEMPTING FUNCTION: GET COMMENT')
 	copyPasta = getComment(phrase)
-	scrape(copyPasta)
-	print ('NOW SLEEPING FOR 10000 UNITS')
+	print ('SLEEPING')
 	time.sleep(10000)
