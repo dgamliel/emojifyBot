@@ -13,7 +13,6 @@ with the emojified text of the parent comment.
 
 phrase = "!emojify"
 
-
 def login():
 
 	'''
@@ -70,8 +69,8 @@ def getComment(trigger):
 	#Test to verify bot is fetching comments in subreddit 'test' and returns unique comment each time.
 	#NOTE: In testing we add 100 ID's to the file idFile.txt each time so if we want to make the bot
 	#run smoothly it might be efficient to clear the file ever time after ever 100 tests or so.
-	for comment in reddit.subreddit('test').comments(limit=100):
-		if comment not in idList:
+	for comment in reddit.subreddit('test').comments(limit=200):
+		if comment not in idList and comment == trigger:
 			print(comment.body + '\nComment ID is : ' + comment.id + '\n')
 			writeToFile(comment)
 
@@ -83,7 +82,7 @@ def scrape(comment):
 	print ("GET request sent to : http://emojipasta.co")
 	
 	#intializes a BS4 object passing the HTML of the text box from the emojipasta website
-	soup = BeautifulSoup(textBox)
+	soup = bs4.BeautifulSoup(textBox)
 
 	#inserts our comment into the box?
 	soup.insert(comment)
@@ -94,9 +93,10 @@ def scrape(comment):
 
 #--------------------------------------------------------
 
+reddit = login()
+
 while True:
-	reddit = login()
 	print ('ATTEMPTING FUNCTION: GET COMMENT')
-	copyPasta = getComment(phrase)
+	getComment('!emojify')
 	print ('SLEEPING')
 	time.sleep(10000)
